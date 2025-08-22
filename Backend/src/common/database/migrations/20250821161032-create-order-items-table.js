@@ -29,7 +29,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      total: {
+      unit_price: {
         allowNull: false,
         type: Sequelize.DECIMAL(10, 2)
       },

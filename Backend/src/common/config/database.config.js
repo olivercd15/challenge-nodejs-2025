@@ -8,6 +8,8 @@ module.exports = {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: 'postgres',
+    migrationStorageTableName: 'sequelize_migrations',
+    seederStorageTableName: 'sequelize_seeders',
     define: {
       underscored: true,
       freezeTableName: true,
@@ -21,6 +23,8 @@ module.exports = {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: 'postgres',
+    migrationStorageTableName: 'sequelize_migrations',
+    seederStorageTableName: 'sequelize_seeders',
     define: {
       underscored: true,
       freezeTableName: true,

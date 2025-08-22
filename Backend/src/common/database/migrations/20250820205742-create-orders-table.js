@@ -32,7 +32,10 @@ module.exports = {
   },
 
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable('order_status_logs');
+    await queryInterface.dropTable('order_items');
     await queryInterface.dropTable('orders');
+    await queryInterface.dropTable('users');
   }
 };
