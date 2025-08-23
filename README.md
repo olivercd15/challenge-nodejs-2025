@@ -6,7 +6,7 @@ Ejecutar los siguientes comandos para levantar el proyecto con Docker:
 
 - Clonar el proyecto
 ```bash
-git clone https://github.com/olivercd15/challenge-laravel-2025.git
+git clone https://github.com/olivercd15/challenge-nodejs-2025.git
 ```
 
 - Ir a carpeta backend
@@ -36,24 +36,18 @@ npm run docker:up
 
 - Realizar las migraciones
 ```bash
-ocker-compose exec app npx sequelize-cli db:migrate --config /app/dist/common/config/database.config.js --migrations-path /app/dist/common/database/migrations
+docker-compose exec app npx sequelize-cli db:migrate --config /app/dist/common/config/database.config.js --migrations-path /app/dist/common/database/migrations
 ```  
 
 - Realizar los seeders (opcional)
 ```bash
-ocker-compose exec app npx sequelize-cli db:migrate --config /app/dist/common/config/database.config.js --seeders-path /app/dist/common/database/seeders
+docker-compose exec app npx sequelize-cli db:migrate --config /app/dist/common/config/database.config.js --seeders-path /app/dist/common/database/seeders
 ```  
 
 - Verificar el proyecto backend corriendo en NestJS
 ```bash
 docker logs backend-app-1 --follow
 ```  
-
-- Habilitar permisos de escritura en Laravel con Nginx
-```bash
-docker compose exec app chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
-```
-
 
 - El enlace para revisar el proyecto es y se debe trabajar con Postman para lo cual se ha compartido la coleccion.
 
