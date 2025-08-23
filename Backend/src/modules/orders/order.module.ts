@@ -8,6 +8,7 @@ import { OrderItemRepository } from './repositories/order-item.repository';
 import { OrderStatusLogRepository } from './repositories/order-status-log.repository';
 import { OrderService } from './services/orders.service';
 import { OrdersController } from './controllers/orders.controller';
+import { OrderCleanupService } from './jobs/order-cleanup.service';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { OrdersController } from './controllers/orders.controller';
     OrderItemRepository,
     OrderStatusLogRepository,
     OrderService,
+    OrderCleanupService,
   ],
   exports: [OrderService],
 })

@@ -1,9 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
-import { TransformResponseInterceptor } from './common/interceptors/transform-response.interceptor';
-import { ErrorHandlerInterceptor } from './common/interceptors/error-handler.interceptor';
+import { HttpExceptionFilter } from './common/exceptions/http.exception.filter';
 
 
 async function bootstrap() {
@@ -17,6 +15,7 @@ async function bootstrap() {
     }),
   );
 
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   app.setGlobalPrefix('api');
   await app.listen(3000);
