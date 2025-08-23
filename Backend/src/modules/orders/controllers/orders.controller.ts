@@ -14,9 +14,16 @@ import { IdValidationPipe } from 'src/common/pipes/id-validation.pipe';
 import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 import { TransformResponseInterceptor } from 'src/common/interceptors/transform-response.interceptor';
 import { OrderCleanupService } from '../jobs/order-cleanup.service';
+import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
+import { CacheResponse } from '@/common/decorators/cache.decorator';
+
 
 @Controller('orders')
-@UseInterceptors(LoggingInterceptor, TransformResponseInterceptor)
+@UseInterceptors(
+  LoggingInterceptor,
+  TransformResponseInterceptor,
+  CacheInterceptor,
+)
 export class OrdersController {
   constructor(
     private readonly orderService: OrderService,
@@ -24,6 +31,8 @@ export class OrdersController {
   ) {}
 
   @Get()
+  @CacheKey('all_orders')
+  @CacheTTL(30) // 30 Secs Cache
   async getAllOrders() {
     return this.orderService.findAllOrders();
   }
@@ -40,6 +49,8 @@ export class OrdersController {
   }
 
   @Get(':id')
+  @CacheKey('order_:id')
+  @CacheTTL(30)
   async getOrder(@Param('id', IdValidationPipe) id: number) {
     return this.orderService.findOrderById(id);
   }

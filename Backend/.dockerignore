@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+dist
+.coverage
+.nyc_output
+.git
+.env
+docker-compose.yml
+Dockerfile
+README.md
+logs
+*.tar.gz
+*.zip

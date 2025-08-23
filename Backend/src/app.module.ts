@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { OrdersModule } from './modules/orders/order.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { RedisModule } from './common/redis/redis.module';
 
 
 @Module({
@@ -11,6 +12,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    RedisModule,
     ScheduleModule.forRoot(),
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],

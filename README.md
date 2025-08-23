@@ -1,91 +1,143 @@
-# 🧪 OlaClick Backend Challenge - NestJS Edition
+# 🧪 OlaClick Backend Challenge - Node/NestJS Edition - Oliver Carranza
 
-## 🎯 Objetivo
+## 🚀 Instrucciones de entrega de proyecto con Docker
 
-Diseñar e implementar una API RESTful que gestione órdenes de un restaurante utilizando el stack:
+Ejecutar los siguientes comandos para levantar el proyecto con Docker: 
 
-- **Node.js + TypeScript**
-- **NestJS (arquitectura modular y principios SOLID)**
-- **Sequelize (ORM)**
-- **PostgreSQL** como base de datos
-- **Redis** para cache
-- **Docker** para contenerización
+- Clonar el proyecto
+```bash
+git clone https://github.com/olivercd15/challenge-laravel-2025.git
+```
 
----
+- Ir a carpeta backend
+```bash
+cd Backend
+```
+
+- Copiar archivo .env
+```bash
+cp .env.example .env
+```
+
+- Construir el proyecto backend
+```bash
+npm run build
+```
+
+- Construir los contenedores
+```bash
+npm run docker:build
+```
+
+- Correr el entorno de Docker
+```bash
+npm run docker:up
+```
+
+- Realizar las migraciones
+```bash
+ocker-compose exec app npx sequelize-cli db:migrate --config /app/dist/common/config/database.config.js --migrations-path /app/dist/common/database/migrations
+```  
+
+- Realizar los seeders (opcional)
+```bash
+ocker-compose exec app npx sequelize-cli db:migrate --config /app/dist/common/config/database.config.js --seeders-path /app/dist/common/database/seeders
+```  
+
+- Verificar el proyecto backend corriendo en NestJS
+```bash
+docker logs backend-app-1 --follow
+```  
+
+- Habilitar permisos de escritura en Laravel con Nginx
+```bash
+docker compose exec app chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+```
+
+
+- El enlace para revisar el proyecto es y se debe trabajar con Postman para lo cual se ha compartido la coleccion.
+
+http://localhost:3000
+
+-Backend/postman/OlaClick Backend Nest.postman_collection.json
+
 
 ## 📌 Requerimientos Funcionales
+Sobre los requierimientos funcionales, se desarrollaron todos los endpoints solicitados con sus respectivos criterios
 
-### 1. Listar todas las órdenes
-- Endpoint: `GET /orders`
-- Devuelve todas las órdenes con estado diferente de `delivered`.
-- Resultado cacheado en **Redis** por 30 segundos.
+
+### 1. Listar órdenes
+- Endpoint: `GET /api/orders`
+- Retorna todas las órdenes activas (`status != 'delivered'`).
+- Debe usar Redis para cachear el resultado (TTL: 30s).
 
 ### 2. Crear una nueva orden
-- Endpoint: `POST /orders`
-- Inserta una nueva orden en estado `initiated`.
+- Endpoint: `POST /api/orders`
+- Crea una nueva orden con estado inicial `initiated`.
 - Estructura esperada:
   ```json
   {
-    "clientName": "Ana López",
+    "client_name": "Carlos Gómez",
     "items": [
-      { "description": "Ceviche", "quantity": 2, "unitPrice": 50 },
-      { "description": "Chicha morada", "quantity": 1, "unitPrice": 10 }
+      { "description": "Lomo saltado", "quantity": 1, "unit_price": 60 },
+      { "description": "Inka Kola", "quantity": 2, "unit_price": 10 }
     ]
   }
 
 ### 3. Avanzar estado de una orden
-Endpoint: `POST /orders/:id/advance`
+Endpoint: `POST /api/orders/{id}/advance`
 
-Progreso del estado:
+Transición:
 
-`initiated → sent → delivered`
+initiated → sent → delivered
 
-Si llega a `delivered`, debe eliminarse de la base de datos y del caché.
+Si llega a delivered, la orden debe ser eliminada de la base de datos y del caché.
 
 ### 4. Ver detalle de una orden
-Endpoint: `GET /orders/:id`
+Endpoint: `GET /api/orders/{id}`
 
-Muestra la orden con todos sus detalles e items.
+Muestra datos completos incluyendo items, totales y estado actual.
 
-### 🧱 Consideraciones Técnicas
-- Estructura modular con NestJS (modules, controllers, services, repositories)
-- Uso de principios SOLID
-- ORM: Sequelize con PostgreSQL
-- Uso de DTOs y Pipes para validaciones
-- Integración con Redis para cache de consultas
-- Manejo de errores estructurado (filtros de excepción, status codes)
-- Contenerización con Docker
-- Al menos una prueba automatizada con Jest (e2e o unit test)
 
-### 📦 Estructura sugerida
-```
-src/
-├── orders/
-│   ├── dto/
-│   ├── entities/
-│   ├── orders.controller.ts
-│   ├── orders.service.ts
-│   ├── orders.module.ts
-├── app.module.ts
-├── main.ts
-```
 
-### 📘 Extras valorados
-- Uso de interceptors para logging o transformación de respuestas
-- Jobs con `@nestjs/schedule` para depuración de órdenes antiguas (bonus)
-- Uso de ConfigModule para manejar variables de entorno
+## 🧱 Consideraciones Técnicas
+Sobre las consideraciones tecnicas y el stack de desarrollo se tiene lo siguiente: 
+- NestJS - Typescript - Node 20.13
+- Base de datos: PostgreSQL
+- Integracion con Redis en: 
+  - Listar Ordenes
+  - Obtener Orden
+- Arquitectura:
+  - Modular
+  - API Rest
+- Principios SOLID aplicados: 
+  - Single Responsability 
+  - Open/Closed Principle
+- Modelado con Sequelize ORM
+- DTOs y Pipes para validaciones
+- Tests realizados con Jest y e2e:
+  - Listar ordenes
+  - Crear orden exitosa
+  - Avanzar con la orden
+  - Obtener detalles de la orden
+- Contenerización con Docker + Docker Compose
 
-### 🚀 Entrega
-1. Haz un fork de este repositorio (o crea uno nuevo).
-2. Implementa tu solución y enviala con un push o enviandonos el enlace del repositorio publico.
-3. Incluye un README.md con:
-- Instrucciones para correr con docker o docker-compose
-- Cómo probar endpoints (Postman, Swagger, cURL)
-- Consideraciones técnicas
 
-❓ Preguntas adicionales 
+## 📘 Extras valorados
+- Se esta trabajando con Interceptors para manejar una estructura de seguimento de codigo de errores y respuestas para todos los endpoints
+- Se han trabajado 2 jobs, uno que elimina ordenes que se han quedado 30 dias y otro que simplemente devuelve las ordenes que han quedado pendientes
+- Logs de cambios de estado: Se agrego una tabla en la base de datos, llamada "OrderStatusLogs", esta tabla guarda el estado actual y el estado siguiente cuando se ejecuta el servicio de Advance Order, cuando se elimina, este dato persiste como un historial. 
+- Se esta trabajando con ConfigModule para sincronizar Sequelize y las variables de entorno con Postgres
+
+
+## ❓ Preguntas opcionales para explicar
 - ¿Cómo desacoplarías la lógica de negocio del framework NestJS?
-- ¿Cómo escalarías esta API para soportar miles de órdenes concurrentes?
-- ¿Qué ventajas ofrece Redis en este caso y qué alternativas considerarías?
+  - Lo trabajaria aplicando Clean Architecture con interfaces, ya que actualmente solo se tiene el repository, pero para desacoplar dependencias, mixearia un poco lo que es la estructura Modular solicitada para trabajar con una arquitectura Clean Architecture, DDD o Hexagonal con los ports y adapters 
 
-¡Buena suerte y disfruta el reto! 🚀
+- ¿Cómo escalarías esta API para soportar miles de órdenes concurrentes?
+  - Aplicaria el patron de CQRS ideal para separar estructuras de lectura y escritura, inclusive estimaria el ORM de ser necesario solo para las consultas de lectura con TypeORM y tambien una arquitectura desacoplada permitiria el desarrollo y los cambios sin afectar otras logicas de negocio a la hora de hacer las optimizaciones.
+
+- ¿Qué ventajas ofrece Redis en este caso y qué alternativas considerarías?
+  - Redis nos permite guardar informacion y utilizarla instantaneamente, para lo cual se han aplicado Decoradores en los controller de lectura GET, pero tambien seria ideal manejar una estructura mas robusta con eliminaciones y asignaciones de tokens de Redis para poder hacerlo mas optimo a la hora de respuestas rapidas, aunque no es para todos los casos, solo para las operaciones mas rutinarias y que requieren bastante flujo.
+
+**¡Saludos!** 💡
